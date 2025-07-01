@@ -69,6 +69,24 @@ public static class DepsJsonAssemblyListLoader
                 yield return localPath;
                 continue;
             }
+
+            foreach (var subDir in new[] { "libraries", "libs", "lib" })
+            {
+                localPath = Path.Combine(dir, subDir, l.DllName);
+                if (File.Exists(localPath))
+                {
+                    yield return localPath;
+                    continue;
+                }
+            }
+
+            localPath = Directory.GetFiles(dir, l.DllName, SearchOption.AllDirectories).FirstOrDefault();
+            if (!string.IsNullOrEmpty(localPath))
+            {
+                yield return localPath;
+                continue;
+            }
+
             foreach (var nugetPath in nugetDirs)
             {
                 foreach (var tolower in new[] { false, true })
